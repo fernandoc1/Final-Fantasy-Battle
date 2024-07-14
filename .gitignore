@@ -5,7 +5,9 @@
 Audio/
 Graphics/
 Shaders/
+*.spc
 
+#Object files
 *.o
 *.so
 

@@ -1,6 +1,7 @@
 #include "gd_spc_player.h"
 #include <godot_cpp/core/class_db.hpp>
 
+#include <godot_cpp/classes/file_access.hpp>
 
 using namespace godot;
 
@@ -8,21 +9,47 @@ void GDSpcPlayer::_bind_methods() {
 }
 
 GDSpcPlayer::GDSpcPlayer() {
-	this->playback = new AudioStreamPlayback();
-	time_passed = 0.0;
+	this->generator = new AudioStreamGenerator();
+	this->playback = this->generator->instantiate_playback();
+
+	this->spcData = FileAccess::get_file_as_bytes("res://Audio/test.spc");
+	this->snes_spc = new SNES_SPC;
+	this->snes_spc->init();
+	this->filter = new SPC_Filter;
+	snes_spc->load_spc(this->spcData.ptr(), this->spcData.size());
+
+	/* Most SPC files have garbage data in the echo buffer, so clear that */
+	this->snes_spc->clear_echo();
+
+	/* Clear filter before playing */
+	this->filter->clear();
+
+	this->generator->set_mix_rate(SNES_SPC::sample_rate * 2);
+
 }
 
 GDSpcPlayer::~GDSpcPlayer() {
-	delete this->playback;
+	delete this->generator;
 	// Add your cleanup here.
 }
 
+void GDSpcPlayer::_ready() {
+	this->fillBuffer();
+}
+
+void GDSpcPlayer::fillBuffer() {
+	int framesPerBuffer = 2048;
+	PackedVector2Array array;
+	array.resize(framesPerBuffer);
+
+	snes_spc->play(framesPerBuffer, (short*)array.ptrw());
+	filter->run((short*)array.ptrw(), framesPerBuffer);
+
+	this->playback->push_buffer(array);
+}
+
 void GDSpcPlayer::_process(double delta) {
-	time_passed += delta;
-
-	//Vector2 new_position = Vector2(10.0 + (10.0 * sin(time_passed * 2.0)), 10.0 + (10.0 * cos(time_passed * 1.5)));
-
-	//set_position(new_position);
+	this->fillBuffer();
 }
 
 /*
