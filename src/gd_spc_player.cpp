@@ -1,17 +1,19 @@
 #include "gd_spc_player.h"
 #include <godot_cpp/core/class_db.hpp>
 
+
 using namespace godot;
 
 void GDSpcPlayer::_bind_methods() {
 }
 
 GDSpcPlayer::GDSpcPlayer() {
-	// Initialize any variables here.
+	this->playback = new AudioStreamPlayback();
 	time_passed = 0.0;
 }
 
 GDSpcPlayer::~GDSpcPlayer() {
+	delete this->playback;
 	// Add your cleanup here.
 }
 

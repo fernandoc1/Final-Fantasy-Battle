@@ -6,7 +6,8 @@ Audio/
 Graphics/
 Shaders/
 
-src/*.os
+*.o
+*.so
 
 bin/*
 demo/*
