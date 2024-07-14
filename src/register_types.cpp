@@ -1,6 +1,6 @@
 #include "register_types.h"
 
-#include "gdexample.h"
+#include "gd_spc_player.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
@@ -14,7 +14,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-    ClassDB::register_class<GDExample>();
+    ClassDB::register_class<GDSpcPlayer>();
 }
 
 void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {

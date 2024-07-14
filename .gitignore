@@ -5,3 +5,9 @@
 Audio/
 Graphics/
 Shaders/
+
+src/*.os
+
+bin/*
+demo/*
+
